@@ -1,984 +1,772 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Sargam Music Academy</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diwali Fireworks Simulator ✨🎆</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(180deg, #0a0e27 0%, #1a1535 50%, #2a1a3a 100%);
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Stars background */
+  .stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Main container */
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,193,7,0.1));
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 2.5em;
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.3);
+  }
+
+  .subtitle {
+    font-size: 1.1em;
+    color: #ffeb3b;
+    opacity: 0.9;
+  }
+
+  /* Canvas container */
+  .canvas-wrapper {
+    position: relative;
+    flex: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.1);
+    min-height: 500px;
+    margin-bottom: 20px;
+  }
+
+  #fireworksCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  /* Diyas at bottom */
+  .diyas-container {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 0 20px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .diya {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .diya:nth-child(2) { animation-delay: 0.5s; }
+  .diya:nth-child(3) { animation-delay: 1s; }
+  .diya:nth-child(4) { animation-delay: 1.5s; }
+  .diya:nth-child(5) { animation-delay: 2s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .diya-body {
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(135deg, #ff8c00, #ff4500);
+    border-radius: 0 0 50% 50%;
+    box-shadow: 0 5px 15px rgba(255,69,0,0.5);
+  }
+
+  .flame {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 30px;
+    background: radial-gradient(circle at center, #fff, #ffeb3b 30%, #ff9800 60%, transparent);
+    border-radius: 50% 50% 20% 20%;
+    animation: flicker 0.3s infinite alternate;
+    filter: blur(1px);
+  }
+
+  @keyframes flicker {
+    0% { transform: translateX(-50%) scale(1) translateY(0); }
+    100% { transform: translateX(-50%) scale(1.1) translateY(-3px); }
+  }
+
+  /* Controls panel */
+  .controls {
+    background: linear-gradient(135deg, rgba(30,30,60,0.9), rgba(50,30,70,0.9));
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .control-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  .control-row:last-child {
+    margin-bottom: 0;
+  }
+
+  button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-launch {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 5px 20px rgba(255,107,107,0.4);
+  }
+
+  .btn-launch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 25px rgba(255,107,107,0.6);
+  }
+
+  .btn-launch:active {
+    transform: translateY(0);
+  }
+
+  .btn-auto {
+    background: linear-gradient(135deg, #4d96ff, #357ae8);
+    color: white;
+    box-shadow: 0 5px 20px rgba(77,150,255,0.4);
+  }
+
+  .btn-auto:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 25px rgba(77,150,255,0.6);
+  }
+
+  .btn-clear {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+    padding: 12px 20px;
+    font-size: 0.95em;
+  }
+
+  .btn-clear:hover {
+    background: linear-gradient(135deg, #5a6268, #343a40);
+  }
+
+  .slider-group {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .slider-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    color: #ffd93d;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.2);
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(255,107,107,0.5);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 10px rgba(255,107,107,0.5);
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat {
+    background: rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.95em;
+  }
+
+  .stat strong {
+    color: #ffd93d;
+    font-size: 1.2em;
+    margin-left: 5px;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.8em;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #222;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    .subtitle {
+      font-size: 0.95em;
     }
 
     header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 15px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
+      padding: 20px 15px;
     }
 
-    header.scrolled {
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.98);
+    .container {
+      padding: 10px;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      flex-shrink: 0;
-    }
-
-    .logo i {
-      font-size: 1.4rem;
-      color: #667eea;
-    }
-
-    nav {
-      display: none;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(10px);
-      flex-direction: column;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      gap: 0;
-    }
-
-    nav.active {
-      display: flex;
-    }
-
-    nav a {
-      color: #333;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 1.1rem;
-      padding: 15px 10px;
-      border-bottom: 1px solid #f0f0f0;
-      transition: 0.3s;
-    }
-
-    nav a:last-child {
-      border-bottom: none;
-    }
-
-    nav a:active {
-      color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
-    }
-
-    .mobile-menu {
-      display: block;
-      font-size: 1.5rem;
-      color: #667eea;
-      cursor: pointer;
-      padding: 5px;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .hero {
-      background: linear-gradient(rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85)), 
-                  url('https://images.unsplash.com/photo-1507838153414-b4b713384a76?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
-      min-height: 100vh;
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-      padding: 100px 20px 60px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 100%;
-      width: 100%;
-    }
-
-    .hero h2 {
-      font-size: clamp(1.8rem, 8vw, 4rem);
-      font-weight: 800;
+    .canvas-wrapper {
+      min-height: 400px;
       margin-bottom: 15px;
-      text-shadow: 2px 4px 8px rgba(0,0,0,0.3);
-      line-height: 1.2;
     }
 
-    .hero p {
-      font-size: clamp(0.95rem, 4vw, 1.4rem);
-      margin-bottom: 30px;
-      font-weight: 300;
-      letter-spacing: 0.3px;
-      color: rgb(0, 0, 0) !important;
+    .controls {
+      padding: 20px 15px;
     }
 
-    .hero-buttons {
-      display: flex;
+    .control-row {
       flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    .btn {
-      padding: 15px 30px;
-      border: none;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: block;
-      width: 100%;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid white;
-      backdrop-filter: blur(10px);
-    }
-
-    .btn-secondary:active {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    section {
-      padding: 60px 20px;
-      background: white;
-      position: relative;
-    }
-
-    section:nth-child(even) {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: clamp(1.8rem, 7vw, 3rem);
-      font-weight: 700;
-      margin-bottom: 15px;
-      background: rgb(0, 0, 0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      position: relative;
-      word-wrap: break-word;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      font-size: clamp(0.95rem, 4vw, 1.2rem);
-      color: #666;
-      margin-bottom: 40px;
-      font-weight: 300;
-      padding: 0 10px;
-    }
-
-    .about-content {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      margin-top: 30px;
-    }
-
-    .about-image {
-      width: 100%;
-    }
-
-    .about-image img {
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-
-    .about-text {
-      width: 100%;
-    }
-
-    .about-text p {
-      font-size: clamp(0.95rem, 3.5vw, 1.15rem);
-      line-height: 1.8;
-      margin-bottom: 15px;
-      color: #555;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    .stat-box {
-      text-align: center;
-      padding: 20px 10px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .stat-number {
-      font-size: clamp(1.8rem, 6vw, 2.5rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stat-label {
-      font-size: clamp(0.8rem, 3vw, 0.95rem);
-      color: #666;
-      margin-top: 5px;
-    }
-
-    .courses {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .course {
-      background: white;
-      padding: 30px 20px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-      position: relative;
-      overflow: hidden;
-      border-top: 4px solid transparent;
-      border-image: linear-gradient(90deg, #667eea, #764ba2) 1;
-    }
-
-    .course-icon {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .course i {
-      font-size: 2rem;
-      color: white;
-    }
-
-    .course h3 {
-      font-size: clamp(1.2rem, 4.5vw, 1.5rem);
-      margin-bottom: 12px;
-      color: #333;
-    }
-
-    .course p {
-      font-size: clamp(0.9rem, 3.5vw, 1rem);
-      color: #666;
-      line-height: 1.6;
-    }
-
-    .testimonials {
-      padding: 60px 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .testimonial {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      padding: 25px 20px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .testimonial-text {
-      font-size: clamp(0.95rem, 3.5vw, 1.05rem);
-      line-height: 1.7;
-      margin-bottom: 18px;
-      font-style: italic;
-    }
-
-    .testimonial-author {
-      display: flex;
-      align-items: center;
       gap: 12px;
     }
 
-    .author-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      flex-shrink: 0;
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1em;
     }
 
-    .author-info h4 {
-      font-size: clamp(1rem, 3.5vw, 1.1rem);
-      margin-bottom: 3px;
+    .slider-group {
+      width: 100%;
+      min-width: unset;
     }
 
-    .author-info p {
-      font-size: clamp(0.85rem, 3vw, 0.9rem);
-      opacity: 0.85;
+    .diyas-container {
+      gap: 15px;
+      bottom: 10px;
     }
 
-    .contact {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 30px;
-      margin-top: 30px;
+    .diya {
+      width: 35px;
+      height: 35px;
     }
 
-    .contact-info {
-      display: flex;
+    .stats {
       flex-direction: column;
-      gap: 15px;
+      gap: 10px;
     }
 
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 18px 15px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-    }
-
-    .info-icon {
-      width: 45px;
-      height: 45px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-    }
-
-    .info-text {
-      color: #555;
-      font-size: clamp(0.9rem, 3.5vw, 1.05rem);
-      word-break: break-word;
-    }
-
-    .contact-form {
-      background: white;
-      padding: 30px 20px;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #333;
-      font-size: clamp(0.95rem, 3.5vw, 1rem);
-    }
-
-    .contact-form input,
-    .contact-form textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
-      outline: none;
-      font-size: clamp(0.95rem, 3.5vw, 1rem);
-      transition: 0.3s;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .contact-form button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: clamp(1rem, 3.5vw, 1.1rem);
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .contact-form button:active {
-      transform: scale(0.98);
-    }
-
-    footer {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    .stat {
       text-align: center;
-      padding: 35px 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.5em;
     }
 
-    .footer-content {
-      max-width: 100%;
+    .canvas-wrapper {
+      min-height: 350px;
     }
 
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
+    .diyas-container {
+      gap: 10px;
     }
 
-    .social-links a {
-      width: 42px;
-      height: 42px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-      transition: 0.3s;
-      -webkit-tap-highlight-color: transparent;
+    .diya {
+      width: 30px;
+      height: 30px;
     }
 
-    .social-links a:active {
-      background: rgba(255, 255, 255, 0.35);
-      transform: scale(0.95);
+    .diya-body {
+      height: 20px;
     }
 
-    footer p {
-      font-size: clamp(0.85rem, 3vw, 0.95rem);
-      line-height: 1.6;
+    .flame {
+      width: 15px;
+      height: 20px;
+      top: -15px;
     }
+  }
 
-    /* Tablet and larger */
-    @media (min-width: 768px) {
-      header {
-        padding: 18px 40px;
-      }
+  /* Instruction tooltip */
+  .instruction {
+    text-align: center;
+    padding: 10px;
+    background: rgba(255,235,59,0.15);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #ffeb3b;
+  }
+  .footer {
+  position: fixed;
+  bottom: 8px;
+  right: 15px;
+  font-size: 0.9em;
+  color: #ffd93d;
+  opacity: 0.9;
+  font-weight: 500;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px rgba(255,217,61,0.3);
+  animation: glowText 2s ease-in-out infinite alternate;
+}
 
-      .logo {
-        font-size: 1.5rem;
-      }
+@keyframes glowText {
+  from { text-shadow: 0 0 5px #ffd93d, 0 0 10px #ffeb3b; }
+  to { text-shadow: 0 0 15px #fff, 0 0 25px #ffd93d; }
+}
 
-      .logo i {
-        font-size: 1.7rem;
-      }
-
-      nav {
-        display: flex;
-        position: static;
-        flex-direction: row;
-        padding: 0;
-        gap: 30px;
-        background: transparent;
-        box-shadow: none;
-      }
-
-      nav a {
-        padding: 0;
-        border: none;
-        position: relative;
-      }
-
-      nav a::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        transition: 0.3s;
-        border-radius: 2px;
-      }
-
-      nav a:hover::after {
-        width: 100%;
-      }
-
-      .mobile-menu {
-        display: none;
-      }
-
-      .hero {
-        background-attachment: fixed;
-        padding: 140px 40px 80px;
-      }
-
-      .hero-buttons {
-        flex-direction: row;
-        max-width: 600px;
-      }
-
-      .btn {
-        width: auto;
-        padding: 16px 40px;
-      }
-
-      section {
-        padding: 80px 6%;
-      }
-
-      .testimonials {
-        padding: 80px 6%;
-      }
-
-      .about-content {
-        flex-direction: row;
-        gap: 50px;
-      }
-
-      .about-image,
-      .about-text {
-        flex: 1;
-        min-width: 300px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-      }
-
-      .courses {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-      }
-
-      .testimonial-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-      }
-
-      .contact {
-        grid-template-columns: 1fr 1.3fr;
-        gap: 50px;
-      }
-
-      .contact-form {
-        padding: 40px 35px;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      header {
-        padding: 20px 50px;
-      }
-
-      .logo {
-        font-size: 1.8rem;
-      }
-
-      .logo i {
-        font-size: 2rem;
-      }
-
-      section {
-        padding: 100px 8%;
-      }
-
-      .testimonials {
-        padding: 100px 8%;
-      }
-
-      .courses {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 35px;
-      }
-
-      .testimonial-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-      }
-    }
-
-    /* Performance optimizations for mobile */
-    @media (max-width: 767px) {
-      * {
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-      }
-
-      .hero {
-        background-attachment: scroll;
-      }
-    }
-  </style>
+</style>
 </head>
 <body>
+  <!-- Stars background -->
+  <div class="stars" id="starsContainer"></div>
 
-  <header id="header">
-    <div class="logo">
-      <i class="fa-solid fa-music"></i>
-      <span>Sargam Music</span>
-    </div>
-    <nav id="nav">
-      <a href="#about" onclick="closeMenu()">About</a>
-      <a href="#courses" onclick="closeMenu()">Courses</a>
-      <a href="#testimonials" onclick="closeMenu()">Testimonials</a>
-      <a href="#contact" onclick="closeMenu()">Contact</a>
-    </nav>
-    <div class="mobile-menu" onclick="toggleMenu()">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-  </header>
+  <div class="container">
+    <header>
+      <h1>✨ Diwali Fireworks Simulator 🎆</h1>
+      <p class="subtitle">Celebrate the Festival of Lights with Amazing Fireworks!</p>
+    </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h2>Discover the Music Within You</h2>
-      <p style="color: black;">Join our academy and learn from passionate musicians and experienced teachers. Transform your passion into mastery.</p>
-      <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="scrollToSection('contact')">Join Now</button>
-        <button class="btn btn-secondary" onclick="scrollToSection('courses')">Explore Courses</button>
-        <button class="btn btn-secondary" ><a href="#testimonials" onclick="closeMenu()" style="text-decoration: none;color: black;">View Testimonials</a></button>
-      </div>
+    <div class="instruction">
+      👆 Tap or click anywhere on the sky to launch fireworks!
     </div>
-  </section>
 
-  <section id="about">
-    <h2 class="section-title">About Us</h2>
-    <p class="section-subtitle">Where passion meets excellence in music education</p>
-    <div class="about-content">
-      <div class="about-image">
-        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80" alt="Music Class">
-      </div>
-      <div class="about-text">
-        <p>Welcome to <strong>Sargam Music Academy</strong>, where rhythm meets passion. Founded by <strong>Maestro Ramesh Sharma</strong> in 2010, our institute has been a beacon for music lovers of all ages.</p>
-        <p>Whether you're a beginner taking your first steps or a performer looking to refine your craft, we nurture your talent with personal attention, modern techniques, and soulful training. We offer professional courses in Indian classical, Western, vocal, and instrumental music.</p>
-        <p>Our vision is to spread the joy of music and make learning it an unforgettable, transformative experience that lasts a lifetime.</p>
-      </div>
-    </div>
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-number">15+</div>
-        <div class="stat-label">Years of Excellence</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number">500+</div>
-        <div class="stat-label">Happy Students</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number">20+</div>
-        <div class="stat-label">Expert Teachers</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number">100+</div>
-        <div class="stat-label">Concerts Performed</div>
+    <div class="canvas-wrapper">
+      <canvas id="fireworksCanvas"></canvas>
+      
+      <!-- Diyas at bottom -->
+      <div class="diyas-container">
+        <div class="diya">
+          <div class="flame"></div>
+          <div class="diya-body"></div>
+        </div>
+        <div class="diya">
+          <div class="flame"></div>
+          <div class="diya-body"></div>
+        </div>
+        <div class="diya">
+          <div class="flame"></div>
+          <div class="diya-body"></div>
+        </div>
+        <div class="diya">
+          <div class="flame"></div>
+          <div class="diya-body"></div>
+        </div>
+        <div class="diya">
+          <div class="flame"></div>
+          <div class="diya-body"></div>
+        </div>
       </div>
     </div>
-  </section>
 
-  <section id="courses">
-    <h2 class="section-title">Our Courses</h2>
-    <p class="section-subtitle">Choose your instrument and begin your musical journey</p>
-    <div class="courses">
-      <div class="course">
-        <div class="course-icon">
-          <i class="fa-solid fa-guitar"></i>
-        </div>
-        <h3>Guitar Training</h3>
-        <p>Learn acoustic, electric, and bass guitar with personalized guidance and live jam sessions.</p>
+    <div class="controls">
+      <div class="control-row">
+        <button class="btn-launch" id="launchBtn">🚀 Launch Firework</button>
+        <button class="btn-auto" id="autoBtn">⚡ Auto Mode: OFF</button>
+        <button class="btn-clear" id="clearBtn">🧹 Clear</button>
       </div>
-      <div class="course">
-        <div class="course-icon">
-          <i class="fa-solid fa-microphone"></i>
-        </div>
-        <h3>Vocal Music</h3>
-        <p>Master classical, Bollywood, and Western singing techniques with stage exposure.</p>
-      </div>
-      <div class="course">
-        <div class="course-icon">
-          <i class="fa-solid fa-drum"></i>
-        </div>
-        <h3>Drums & Rhythm</h3>
-        <p>Feel the beat! Learn percussion, rhythm theory, and perform live in concerts.</p>
-      </div>
-    </div>
-  </section>
 
-  <section class="testimonials" id="testimonials">
-    <h2 class="section-title" style="color: white;">What Our Students Say</h2>
-    <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Real stories from our musical family</p>
-    <div class="testimonial-grid">
-      <div class="testimonial">
-        <p class="testimonial-text">"Sargam Music Academy transformed my passion into profession. The teachers are incredibly supportive and the environment is perfect for learning."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">
-            <i class="fa-solid fa-user"></i>
-          </div>
-          <div class="author-info">
-            <h4>Priya Mehta</h4>
-            <p>Vocal Student</p>
-          </div>
+      <div class="control-row">
+        <div class="slider-group">
+          <label>Particles: <span id="particleValue">100</span></label>
+          <input type="range" id="particleSlider" min="50" max="200" value="100">
         </div>
-      </div>
-      <div class="testimonial">
-        <p class="testimonial-text">"The guitar program here is exceptional. I went from never touching a guitar to performing at concerts in just one year!"</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">
-            <i class="fa-solid fa-user"></i>
-          </div>
-          <div class="author-info">
-            <h4>Arjun Singh</h4>
-            <p>Guitar Student</p>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial">
-        <p class="testimonial-text">"Best decision ever! The personalized attention and modern teaching methods make all the difference. Highly recommended!"</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">
-            <i class="fa-solid fa-user"></i>
-          </div>
-          <div class="author-info">
-            <h4>Sneha Kapoor</h4>
-            <p>Piano Student</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <h2 class="section-title" style="color: black;">Contact Us</h2>
-    <p class="section-subtitle">Ready to start your musical journey? Get in touch!</p>
-    <div class="contact">
-      <div class="contact-info">
-        <div class="info-item">
-          <div class="info-icon">
-            <i class="fa-solid fa-location-dot"></i>
-          </div>
-          <div class="info-text">23 Harmony Lane, Music Nagar, Delhi - 110001</div>
-        </div>
-        <div class="info-item">
-          <div class="info-icon">
-            <i class="fa-solid fa-phone"></i>
-          </div>
-          <div class="info-text">+91 98765 43210</div>
-        </div>
-        <div class="info-item">
-          <div class="info-icon">
-            <i class="fa-solid fa-envelope"></i>
-          </div>
-          <div class="info-text">info@sargammusicacademy.in</div>
-        </div>
-        <div class="info-item">
-          <div class="info-icon">
-            <i class="fa-brands fa-instagram"></i>
-          </div>
-          <div class="info-text">@sargam.music.academy</div>
+        <div class="slider-group">
+          <label>Speed: <span id="speedValue">5</span></label>
+          <input type="range" id="speedSlider" min="3" max="10" value="5">
         </div>
       </div>
 
-      <div class="contact-form">
-        <form onsubmit="sendMessage(event)">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" placeholder="Enter your name" required>
-          </div>
-          <div class="form-group">
-            <label>Your Email</label>
-            <input type="email" placeholder="Enter your email" required>
-          </div>
-          <div class="form-group">
-            <label>Your Message</label>
-            <textarea rows="4" placeholder="Tell us about your musical interests..." required></textarea>
-          </div>
-          <button type="submit">Send Message</button>
-        </form>
+      <div class="stats">
+        <div class="stat">Fireworks Launched: <strong id="launchCount">0</strong></div>
+        <div class="stat">Active Particles: <strong id="particleCount">0</strong></div>
       </div>
     </div>
-  </section>
-
-  <footer>
-    <div class="footer-content">
-      <div class="social-links">
-        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-        <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
-      </div>
-      <p>© 2025 Sargam Music Academy | Designed with 🎵 by Vansh</p>
-    </div>
+  </div>
+  <footer class="footer">
+    Made with ❤️ by Garg Family
   </footer>
+  
+<script>
+// Create stars
+const starsContainer = document.getElementById('starsContainer');
+for (let i = 0; i < 100; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.left = Math.random() * 100 + '%';
+  star.style.top = Math.random() * 60 + '%';
+  star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+  star.style.animationDelay = Math.random() * 3 + 's';
+  starsContainer.appendChild(star);
+}
 
-  <script>
-    function toggleMenu() {
-      const nav = document.getElementById('nav');
-      nav.classList.toggle('active');
+// Canvas setup
+const canvas = document.getElementById('fireworksCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const wrapper = canvas.parentElement;
+  canvas.width = wrapper.clientWidth;
+  canvas.height = wrapper.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Firework system
+let particles = [];
+let rockets = [];
+let launchCount = 0;
+let autoMode = false;
+let autoInterval;
+
+// Controls
+const launchBtn = document.getElementById('launchBtn');
+const autoBtn = document.getElementById('autoBtn');
+const clearBtn = document.getElementById('clearBtn');
+const particleSlider = document.getElementById('particleSlider');
+const speedSlider = document.getElementById('speedSlider');
+const particleValue = document.getElementById('particleValue');
+const speedValue = document.getElementById('speedValue');
+const launchCountEl = document.getElementById('launchCount');
+const particleCountEl = document.getElementById('particleCount');
+
+particleSlider.addEventListener('input', (e) => {
+  particleValue.textContent = e.target.value;
+});
+
+speedSlider.addEventListener('input', (e) => {
+  speedValue.textContent = e.target.value;
+});
+
+// Particle class
+class Particle {
+  constructor(x, y, vx, vy, color, size = 2) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.color = color;
+    this.size = size;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.015 + 0.01;
+    this.gravity = 0.08;
+  }
+
+  update() {
+    this.vy += this.gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= this.decay;
+    this.vx *= 0.99;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Glow effect
+    ctx.globalAlpha = this.alpha * 0.5;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// Rocket class
+class Rocket {
+  constructor(x, targetY) {
+    this.x = x;
+    this.y = canvas.height;
+    this.targetY = targetY;
+    this.vx = (Math.random() - 0.5) * 2;
+    this.vy = -8 - Math.random() * 2;
+    this.color = '#fff';
+    this.size = 3;
+    this.exploded = false;
+  }
+
+  update() {
+    this.vy += 0.1;
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Create trail
+    particles.push(new Particle(
+      this.x,
+      this.y,
+      (Math.random() - 0.5) * 0.5,
+      Math.random() * 1,
+      'rgba(255,220,100,0.8)',
+      1.5
+    ));
+
+    // Check if reached target height or started falling
+    if (this.y <= this.targetY || this.vy > 0) {
+      this.explode();
+      this.exploded = true;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  explode() {
+    const particleCount = parseInt(particleSlider.value);
+    const speed = parseInt(speedSlider.value);
+    const colors = [
+      '#ff0000', '#ff4500', '#ffd700', '#00ff00', '#00ffff',
+      '#0080ff', '#8000ff', '#ff00ff', '#ff1493', '#ffffff'
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount;
+      const velocity = (Math.random() * speed + speed * 0.5);
+      const vx = Math.cos(angle) * velocity;
+      const vy = Math.sin(angle) * velocity;
+      
+      particles.push(new Particle(
+        this.x,
+        this.y,
+        vx,
+        vy,
+        color,
+        Math.random() * 2 + 1
+      ));
     }
 
-    function closeMenu() {
-      const nav = document.getElementById('nav');
-      nav.classList.remove('active');
+    // Add secondary burst
+    for (let i = 0; i < particleCount / 2; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = Math.random() * speed * 0.7;
+      const vx = Math.cos(angle) * velocity;
+      const vy = Math.sin(angle) * velocity;
+      
+      const secondColor = colors[Math.floor(Math.random() * colors.length)];
+      particles.push(new Particle(
+        this.x,
+        this.y,
+        vx,
+        vy,
+        secondColor,
+        Math.random() * 1.5 + 0.5
+      ));
     }
+  }
+}
 
-    window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
-      const nav = document.getElementById('nav');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-      // Close mobile menu on scroll
-      if (nav.classList.contains('active')) {
-        nav.classList.remove('active');
-      }
-    });
+// Launch firework
+function launchFirework(x, y) {
+  // Ensure x is within bounds with padding
+  const padding = 50;
+  x = Math.max(padding, Math.min(canvas.width - padding, x));
+  
+  // Target height between 20% and 50% of canvas height
+  const targetY = canvas.height * 0.2 + Math.random() * canvas.height * 0.3;
+  
+  rockets.push(new Rocket(x, targetY));
+  launchCount++;
+  launchCountEl.textContent = launchCount;
+}
 
-    function scrollToSection(id) {
-      const element = document.getElementById(id);
-      const headerHeight = 70;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - headerHeight;
+// Animation loop
+function animate() {
+  ctx.fillStyle = 'rgba(10, 14, 39, 0.15)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      
-      closeMenu();
+  // Update and draw rockets
+  for (let i = rockets.length - 1; i >= 0; i--) {
+    rockets[i].update();
+    rockets[i].draw();
+    
+    if (rockets[i].exploded) {
+      rockets.splice(i, 1);
     }
+  }
 
-    function sendMessage(e) {
-      e.preventDefault();
-      
-      const button = e.target.querySelector('button');
-      const originalText = button.textContent;
-      
-      button.textContent = 'Sending...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        button.textContent = '✓ Message Sent!';
-        button.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-        
-        setTimeout(() => {
-          alert("Thank you for contacting Sargam Music Academy! We'll get back to you soon.");
-          e.target.reset();
-          button.textContent = originalText;
-          button.disabled = false;
-          button.style.background = '';
-        }, 1500);
-      }, 1000);
+  // Update and draw particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    particles[i].draw();
+    
+    if (particles[i].alpha <= 0 || particles[i].y > canvas.height + 50) {
+      particles.splice(i, 1);
     }
+  }
 
-    // Smooth scroll for all anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        if (targetId) {
-          scrollToSection(targetId);
-        }
-      });
-    });
+  particleCountEl.textContent = particles.length;
+  requestAnimationFrame(animate);
+}
 
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      const nav = document.getElementById('nav');
-      const mobileMenu = document.querySelector('.mobile-menu');
-      
-      if (nav.classList.contains('active') && 
-          !nav.contains(e.target) && 
-          !mobileMenu.contains(e.target)) {
-        closeMenu();
-      }
-    });
+animate();
 
-    // Prevent body scroll when mobile menu is open
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          const nav = document.getElementById('nav');
-          if (nav.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
-          } else {
-            document.body.style.overflow = '';
-          }
-        }
-      });
-    });
+// Event listeners
+launchBtn.addEventListener('click', () => {
+  const x = canvas.width * 0.3 + Math.random() * canvas.width * 0.4;
+  launchFirework(x, 0);
+});
 
-    observer.observe(document.getElementById('nav'), { attributes: true });
-  </script>
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  launchFirework(x, y);
+});
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  launchFirework(x, y);
+});
+
+autoBtn.addEventListener('click', () => {
+  autoMode = !autoMode;
+  if (autoMode) {
+    autoBtn.textContent = '⚡ Auto Mode: ON';
+    autoBtn.style.background = 'linear-gradient(135deg, #00ff00, #00cc00)';
+    autoInterval = setInterval(() => {
+      const x = canvas.width * 0.2 + Math.random() * canvas.width * 0.6;
+      launchFirework(x, 0);
+    }, 1000);
+  } else {
+    autoBtn.textContent = '⚡ Auto Mode: OFF';
+    autoBtn.style.background = 'linear-gradient(135deg, #4d96ff, #357ae8)';
+    clearInterval(autoInterval);
+  }
+});
+
+clearBtn.addEventListener('click', () => {
+  particles = [];
+  rockets = [];
+  ctx.fillStyle = 'rgba(10, 14, 39, 1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+});
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    const x = canvas.width * 0.3 + Math.random() * canvas.width * 0.4;
+    launchFirework(x, 0);
+  }
+});
+
+// Initial firework
+setTimeout(() => {
+  launchFirework(canvas.width / 2, 0);
+}, 500);
+</script>
 </body>
 </html>
